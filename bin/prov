@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+system('clear')
+puts 'Watching files...'
+#figure out which watchr to load and run it
