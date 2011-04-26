@@ -1,12 +1,13 @@
 module Providence
-  class RspecWatchr < Providence
+  class RspecWatchr < Providence::BaseWatchr
     attr_accessor :spec
     
-    def watch
+    def peep
       watch('spec/spec_helper\.rb') { run_all }
       watch('spec/support/.*')      { run_all }
       watch('spec/.*_spec\.rb')     { |m| run m[0] }
       watch('app/.*\.rb')           { |m| related(m[0]).map {|tf| run tf } }
+      watch('lib/.*\.rb')           { |m| related(m[0]).map {|tf| run tf } }
     end
     
     def growl(message='')

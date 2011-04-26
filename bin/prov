@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+require 'watchr'
+require 'pathname'
+require File.join(File.dirname(__FILE__), '..', 'lib', 'providence')
+
 system('clear')
 puts 'Watching files...'
-#figure out which watchr to load and run it
+
+Watchr::Controller.new(Watchr::Script.new(Pathname.new('/Users/chuckcollins/projects/personal/ruby/providence/watchrs/ror.watchr')), Watchr.handler.new).run

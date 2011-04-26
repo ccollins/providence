@@ -1,8 +1,8 @@
 module Providence
-  class CucumberWatchr < Providence
+  class CucumberWatchr < Providence::BaseWatchr
     attr_accessor :cucumber
     
-    def watch
+    def peep
       watch('features/support/.*')  { |m| run_all }
       watch('features/.*\.feature') { |m| run m[0] }
     end
@@ -47,7 +47,7 @@ module Providence
       stdout.close
       stderr.close
   
-      growl_feature last_output.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
+      growl last_output.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
     end
 
     def run_all
