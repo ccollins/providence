@@ -1,6 +1,6 @@
 module Providence
   class BaseWatchr
-    attr_accessor :watchrs
+    attr_accessor :watchrs, :ec
 
     class << self
       def pass_image
@@ -16,16 +16,17 @@ module Providence
       end
     end
     
-    def initialize *args
+    def initialize eval_context, *args
+      @ec = eval_context
       @watchrs = args || []
     end
   
     def run_suite
-      watchrs.each {|w| w.run_all }
+      watchrs.each {|w| w.run_all(ec) }
     end
     
-    def peep
-      watchrs.each {|w| w.peep }
+    def watch
+      watchrs.each {|w| w.watch(ec) }
     end
   end
 end

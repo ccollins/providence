@@ -2,6 +2,10 @@ require 'spec_helper'
 
 module Providence
   describe BaseWatchr do
+    before(:each) do
+      @base_watchr = BaseWatchr.new(mock())
+    end
+    
     it "should have an image for passing tests" do
       File.exists?(BaseWatchr.pass_image).should be_true
     end
@@ -15,21 +19,21 @@ module Providence
     end
     
     context "#initialize" do
-      it "should take accept no args" do
-        bw = BaseWatchr.new
+      it "should take accept context and no args" do
+        bw = BaseWatchr.new(mock())
         bw.watchrs.count.should == 0
       end
       
-      it "should take multiple args" do
-        bw = BaseWatchr.new(Object.new, Object.new, Object.new)
+      it "should take context and multiple args" do
+        bw = BaseWatchr.new(mock(), Object.new, Object.new, Object.new)
         bw.watchrs.count.should == 3
       end
     end
     
     context "#watchrs" do
       it "should accept multiple objects" do
-        subject.watchrs << Object.new << Object.new
-        subject.watchrs.count.should == 2
+        @base_watchr.watchrs << Object.new << Object.new
+        @base_watchr.watchrs.count.should == 2
       end
     end
     
@@ -38,10 +42,10 @@ module Providence
         5.times do
           watchr = mock()
           watchr.expects(:run_all).once
-          subject.watchrs << watchr
+          @base_watchr.watchrs << watchr
         end
         
-        subject.run_suite
+        @base_watchr.run_suite
       end
     end
     
@@ -50,10 +54,10 @@ module Providence
         5.times do
           watchr = mock()
           watchr.expects(:watch).once
-          subject.watchrs << watchr
+          @base_watchr.watchrs << watchr
         end
         
-        subject.watch
+        @base_watchr.watch
       end
     end
   end

@@ -1,34 +1,34 @@
 module Providence
   class CucumberWatchr < Providence::BaseWatchr
-    attr_accessor :cucumber
+    def initialize; end
     
-    def peep
-      watch('features/support/.*')  { |m| run_all }
-      watch('features/.*\.feature') { |m| run m[0] }
+    def watch(ec)
+      ec.watch('features/support/.*')  { |m| Providence::CumberWatchr.run_all }
+      ec.watch('features/.*\.feature') { |m| Providence::CumberWatchr.run m[0] }
     end
     
-    def growl(message='')
+    def self.growl(message='')
       if message.match(/failed/)
         title = 'Watchr: Scenarios are failing'
-        image = $fail
+        image = BaseWatchr.fail_image
       elsif message.match(/passed/)
         title = 'Watchr: All scenarios passed'
-        image = $pass
+        image = BaseWatchr.pass_image
       elsif message.match(/undefined/)
         title = 'Watchr: Undefined Steps'
-        image = $pending
+        image = BaseWatchr.pending_image
       else
-        title = 'Watchr: Running features'
-        message = 'Running features'
-        image = $pending
+        title = 'Watchr: Running cukes'
+        message = 'Running cukes...'
+        image = BaseWatchr.pending_image
       end
       Growl.notify message, :icon => image, :title => title
     end
 
-    def run(feature_path)  
-      cmd = "#{cucumber} #{feature_path}"
+    def self.run(feature_path)  
+      cmd = "#{Providence::CumberWatchr.cucumber} #{feature_path}"
   
-      growl_feature
+      Providence::CumberWatchr.growl
       system('clear')
       puts(cmd)
   
@@ -47,14 +47,14 @@ module Providence
       stdout.close
       stderr.close
   
-      growl last_output.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
+      Providence::CumberWatchr.growl last_output.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
     end
 
-    def run_all
-      run 'features'
+    def self.run_all
+      Providence::CumberWatchr.run 'features'
     end
     
-    def cucumber
+    def self.cucumber
       "cucumber --color --drb --require features/step_definitions --require features/support"
     end
   end

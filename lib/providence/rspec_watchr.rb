@@ -1,37 +1,38 @@
 module Providence
-  class RspecWatchr < Providence::BaseWatchr
+  class RspecWatchr
     attr_accessor :spec
     
-    def peep
-      watch('spec/spec_helper\.rb') { run_all }
-      watch('spec/support/.*')      { run_all }
-      watch('spec/.*_spec\.rb')     { |m| run m[0] }
-      watch('app/.*\.rb')           { |m| related(m[0]).map {|tf| run tf } }
-      watch('lib/.*\.rb')           { |m| related(m[0]).map {|tf| run tf } }
+    def initialize; end
+    
+    def watch(ec)
+      ec.watch('spec/support/.*')      { Providence::RspecWatchr.run_all }
+      ec.watch('spec/.*_spec\.rb')     { |m| Providence::RspecWatchr.run m[0] }
+      ec.watch('app/.*\.rb')           { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
+      ec.watch('lib/.*\.rb')           { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
     end
     
-    def growl(message='')
+    def self.growl(message='')
       if message.match(/\s0\s(errors|failures)/)
         title = 'Watchr: All specs passed'
-        image = pass
+        image = BaseWatchr.pass_image
       elsif message.match(/(error|failure)/)
         title = 'Watchr: Specs are failing'
-        image = fail
+        image = BaseWatchr.fail_image
       elsif message.match(/pending/)
         title = 'Watchr: Pending specs'
-        image = pending
+        image = BaseWatchr.pending_image
       else
         title = 'Watchr: Running specs'
         message = 'Running specs'
-        image = pending
+        image = BaseWatchr.pending_image
       end
       Growl.notify message, :icon => image, :title => title
     end
 
-    def run(spec_path)
-      cmd = "#{spec} #{spec_path}"
+    def self.run(spec_path)
+      cmd = "#{Providence::RspecWatchr.spec} #{spec_path}"
   
-      growl
+      Providence::RspecWatchr.growl 'Running specs...'
       system('clear')
       puts(cmd)
   
@@ -49,28 +50,23 @@ module Providence
       stdout.close
       stderr.close
   
-      growl last_output.gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
+      Providence::RspecWatchr.growl last_output.gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
     end
 
-    def run_all
-      run 'spec'
+    def self.run_all
+      Providence::RspecWatchr.run 'spec'
     end
 
-    def related(path)
+    def self.related(path)
       Dir['spec/**/*.rb'].select { |file| file =~ /#{File.basename(path).split(".").first}_spec.rb/ }
     end
-    
-    def spec
-      @spec ||= spec_command
-    end
-    
-    protected
-    def spec_command
-      rspec_version = Gem.searcher.find('rspec').to_s.split('.')
+
+    def self.spec
+      rspec_version = Gem.searcher.find('rspec').version.version.to_s.split('.')[0]
       case rspec_version
-      when 1
+      when "1"
         "env RSPEC_COLOR=true rspec --drb --colour --format nested"
-      when 2
+      when "2"
         "rspec --tty --drb --colour --format nested"
       end
     end
