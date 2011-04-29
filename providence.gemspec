@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
     "lib/providence/event_handlers/darwin.rb",
     "lib/providence/eye.rb",
     "lib/providence/rspec_watchr.rb",
+    "providence.gemspec",
     "spec/lib/providence/base_watchr_spec.rb",
     "spec/lib/providence/cucumber_watchr_spec.rb",
     "spec/lib/providence/event_handlers/darwin_spec.rb",
