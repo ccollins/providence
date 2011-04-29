@@ -40,11 +40,9 @@ module Providence
       end
 
       def command
-        rspec_version = Gem.searcher.find('rspec').version.version.to_s.split('.')[0]
-        case rspec_version
-        when "1"
-          "env RSPEC_COLOR=true rspec --drb --colour --format nested"
-        when "2"
+        if Gem.searcher.find('rspec').nil?
+          "env RSPEC_COLOR=true spec --drb --colour --format nested"
+        else
           "rspec --tty --drb --colour --format nested"
         end
       end
