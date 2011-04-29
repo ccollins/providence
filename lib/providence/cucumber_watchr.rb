@@ -2,21 +2,21 @@ module Providence
   class CucumberWatchr < BaseWatchr
     #order matters here, top is last to match, bottom is first
     def watch(ec)
-      ec.watch('features/support/.*')  { |m| Providence::CumberWatchr.run_all }
-      ec.watch('features/.*\.feature') { |m| Providence::CumberWatchr.run m[0] }
+      ec.watch('features/support/.*')  { |m| Providence::CucumberWatchr.run_all }
+      ec.watch('features/.*\.feature') { |m| Providence::CucumberWatchr.run m[0] }
     end
     
     class << self
       def growl_test_status(status)
         status = status.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
         
-        if message.match(/failed/)
+        if status.match(/failed/)
           message = 'Cukes are failing'
           image = Eye.fail_image
-        elsif message.match(/passed/)
+        elsif status.match(/passed/)
           message = 'All cukes passed'
           image = Eye.pass_image
-        elsif message.match(/undefined/)
+        elsif status.match(/undefined/)
           message = 'Undefined steps'
           image = Eye.pending_image
         else

@@ -11,13 +11,13 @@ module Providence
         last_output = []
         stdin, stdout, stderr = Open3.popen3(cmd)
         while !stdout.eof? || !stderr.eof
+          err = stderr.gets
+          puts err unless err.nil? || err.strip.empty?
+          
           line = stdout.gets
           last_output.replace([]) if line.strip.empty?
           last_output.push(line)
           puts line         
-          
-          err = stderr.gets
-          puts err unless err.nil? || err.strip.empty?
         end
   
         growl_test_status last_output
