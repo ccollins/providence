@@ -10,6 +10,7 @@ GEM
       rake
     mocha (0.9.12)
     rake (0.8.7)
+    rb-fsevent (0.4.0)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
       rspec-expectations (~> 2.5.0)
@@ -28,5 +29,6 @@ DEPENDENCIES
   growl
   jeweler (~> 1.5.2)
   mocha
+  rb-fsevent
   rspec
   watchr

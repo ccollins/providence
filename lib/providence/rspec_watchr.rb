@@ -1,73 +1,52 @@
 module Providence
-  class RspecWatchr
-    attr_accessor :spec
-    
-    def initialize; end
-    
+  class RspecWatchr < BaseWatchr
+    #order matters here, top is last to match, bottom is first
     def watch(ec)
-      ec.watch('spec/support/.*')      { Providence::RspecWatchr.run_all }
-      ec.watch('spec/.*_spec\.rb')     { |m| Providence::RspecWatchr.run m[0] }
-      ec.watch('app/.*\.rb')           { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
-      ec.watch('lib/.*\.rb')           { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
+      ec.watch('app/.*\.rb')        { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
+      ec.watch('lib/.*\.rb')        { |m| Providence::RspecWatchr.related(m[0]).map {|tf| Providence::RspecWatchr.run tf } }
+      ec.watch('spec/support/.*')   { Providence::RspecWatchr.run_all }
+      ec.watch('spec/.*_spec\.rb')  { |m| Providence::RspecWatchr.run m[0] }
     end
     
-    def self.growl(message='')
-      if message.match(/\s0\s(errors|failures)/)
-        title = 'Watchr: All specs passed'
-        image = BaseWatchr.pass_image
-      elsif message.match(/(error|failure)/)
-        title = 'Watchr: Specs are failing'
-        image = BaseWatchr.fail_image
-      elsif message.match(/pending/)
-        title = 'Watchr: Pending specs'
-        image = BaseWatchr.pending_image
-      else
-        title = 'Watchr: Running specs'
-        message = 'Running specs'
-        image = BaseWatchr.pending_image
+    class << self
+      def growl_test_status(status)
+        status = status.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
+
+        if status.match(/\s0\s(errors|failures)/)
+          if status.match(/pending/)
+            message = 'Pending specs, all others passing'
+            image = Eye.pending_image
+          else
+            message = 'All specs passed'
+            image = Eye.pass_image  
+          end
+        elsif status.match(/(error|failure)/)
+          message = 'Specs are failing'
+          image = Eye.fail_image
+        else
+          message = 'Cannot determine test status'
+          image = Eye.alert_image
+        end
+        
+        Eye.growl message, image
       end
-      Growl.notify message, :icon => image, :title => title
-    end
 
-    def self.run(spec_path)
-      cmd = "#{Providence::RspecWatchr.spec} #{spec_path}"
-  
-      Providence::RspecWatchr.growl 'Running specs...'
-      system('clear')
-      puts(cmd)
-  
-      last_output = ''
-      stdin, stdout, stderr = Open3.popen3(cmd)
-      stdout.each_line do |line|
-        last_output = line
-        puts line
+      def run_all
+        run 'spec'
       end
-      stderr.each_line do |line|
-        last_output = line
-        puts line
+
+      def related(path)
+        Dir['spec/**/*.rb'].select { |file| file =~ /#{File.basename(path).split(".").first}_spec.rb/ }
       end
-      stdin.close
-      stdout.close
-      stderr.close
-  
-      Providence::RspecWatchr.growl last_output.gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
-    end
 
-    def self.run_all
-      Providence::RspecWatchr.run 'spec'
-    end
-
-    def self.related(path)
-      Dir['spec/**/*.rb'].select { |file| file =~ /#{File.basename(path).split(".").first}_spec.rb/ }
-    end
-
-    def self.spec
-      rspec_version = Gem.searcher.find('rspec').version.version.to_s.split('.')[0]
-      case rspec_version
-      when "1"
-        "env RSPEC_COLOR=true rspec --drb --colour --format nested"
-      when "2"
-        "rspec --tty --drb --colour --format nested"
+      def command
+        rspec_version = Gem.searcher.find('rspec').version.version.to_s.split('.')[0]
+        case rspec_version
+        when "1"
+          "env RSPEC_COLOR=true rspec --drb --colour --format nested"
+        when "2"
+          "rspec --tty --drb --colour --format nested"
+        end
       end
     end
   end

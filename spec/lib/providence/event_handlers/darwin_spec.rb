@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 module Providence
-  describe BaseWatchr do
-    it "should" do
-      pending
+  module EventHandler
+    describe Darwin do
     end
   end
 end

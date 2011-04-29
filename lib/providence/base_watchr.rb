@@ -1,32 +1,31 @@
 module Providence
   class BaseWatchr
-    attr_accessor :watchrs, :ec
-
     class << self
-      def pass_image
-        @pass_image ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', '..', 'images', 'red-green-yellow', 'pass.png')
-      end
-      
-      def fail_image
-        @fail_image ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', '..', 'images', 'red-green-yellow', 'fail.png')
-      end
-      
-      def pending_image
-        @pending_image ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', '..', 'images', 'red-green-yellow', 'pending.png')
-      end
-    end
-    
-    def initialize eval_context, *args
-      @ec = eval_context
-      @watchrs = args || []
-    end
+      def run(path)  
+        cmd = "#{command} #{path}"
   
-    def run_suite
-      watchrs.each {|w| w.run_all(ec) }
-    end
-    
-    def watch
-      watchrs.each {|w| w.watch(ec) }
+        Eye.growl "Running #{name}"
+        system('clear')
+        puts(cmd)
+  
+        last_output = []
+        stdin, stdout, stderr = Open3.popen3(cmd)
+        while !stdout.eof? || !stderr.eof
+          line = stdout.gets
+          last_output.replace([]) if line.strip.empty?
+          last_output.push(line)
+          puts line         
+          
+          err = stderr.gets
+          puts err unless err.nil? || err.strip.empty?
+        end
+  
+        growl_test_status last_output
+      
+        stdin.close
+        stdout.close
+        stderr.close
+      end
     end
   end
 end

@@ -6,4 +6,14 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'providence')
 system('clear')
 puts 'Watching files...'
 
-Watchr::Controller.new(Watchr::Script.new(Pathname.new('/Users/chuckcollins/projects/personal/ruby/providence/watchrs/ror.watchr')), Watchr.handler.new).run
+module Providence
+  def Providence.find_watchr_file
+    if File.exists?(File.join(Dir.pwd, '.watchr'))
+      File.join(Dir.pwd, '.watchr')
+    else
+      File.join(File.dirname(__FILE__), '..', 'watchrs', 'rails.watchr')
+    end
+  end
+end
+
+Watchr::Controller.new(Watchr::Script.new(Pathname.new(Providence.find_watchr_file)), Providence::EventHandler::Darwin.new).run
