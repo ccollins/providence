@@ -15,33 +15,26 @@ Jeweler::Tasks.new do |gem|
   gem.name = "providence"
   gem.homepage = "http://github.com/ccollins/providence"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Ready made watchr files for rails projects using rspec and cucumber}
+  gem.description = %Q{Ready made watchr files for rails projects using rspec and cucumber.  Beware the growl.  Only tested on OSX.}
   gem.email = "chuck.collins@gmail.com"
   gem.authors = ["Chuck Collins"]
+  gem.bindir = "bin"
+  gem.executables = "prov"
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
-  gem.add_dependency 'nokogiri'
+  
+  gem.add_dependency 'growl'
+  gem.add_dependency 'rb-fsevent'
+  gem.add_dependency 'watchr'  
+  gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'cucumber'
+  gem.add_development_dependency 'mocha'
+  gem.add_development_dependency 'rcov'
 end
 Jeweler::RubygemsDotOrgTasks.new
-
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
