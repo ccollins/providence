@@ -7,9 +7,11 @@ Overview
 --------
 
 To get started with providence add it to your gemfile:
+
     gem 'providence'
 
 And type prov from the root of your project to start testing:
+
     >$ prov
   
 If you want to bypass providence and use watchr functionality, run the 'prov' command in the same directory as a .watchr file.  Providence will pick this up and use this script instead of its own rails.watchr.
