@@ -1,8 +1,25 @@
-= providence
+Providence
+==========
 
-Ready made watchr files for rails projects using rspec and cucumber.
+Ready made [watchr][https://github.com/mynyml/watchr] files for rails projects using [rspec][https://github.com/rspec/rspec] and [cucumber][https://github.com/aslakhellesoy/cucumber].  Beware the [growl][http://growl.info/].  Only tested with OSX.
 
-== Contributing to providence
+Overview
+--------
+
+To get started with providence add it to your gemfile
+  gem 'providence'
+
+And type prov from the root of your project to start testing
+  >$ prov
+  
+If you want to bypass providence and use watchr functionality, run the 'prov' command in the same directory as a .watchr file.  Providence will
+pick this up and use this script instead of its own rails.watchr.
+
+There is also a new driver for [rb-fsevent][https://github.com/thibaudgg/rb-fsevent] that seems to be more stable in ruby 1.9.x then the fsevent driver watchr
+is using.  Hopefully this will clear up some of the file event issues with watchr.
+
+Contributing to providence
+--------------------------
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
@@ -12,7 +29,8 @@ Ready made watchr files for rails projects using rspec and cucumber.
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
-== Copyright
+Copyright
+---------
 
 Copyright (c) 2011 Chuck Collins
 
