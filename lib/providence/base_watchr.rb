@@ -15,7 +15,7 @@ module Providence
           puts err unless err.nil? || err.strip.empty?
           
           line = stdout.gets
-          last_output.replace([]) if line.strip.empty?
+          last_output.replace([]) if line.nil? || line.strip.empty?
           last_output.push(line)
           puts line         
         end

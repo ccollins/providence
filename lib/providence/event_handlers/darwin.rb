@@ -5,6 +5,7 @@ module Providence
   module EventHandler
     # Uses ruby-fsevents (https://github.com/thibaudgg/rb-fsevent)
     class Darwin < FSEvent
+      attr_accessor :watched_paths
       include Watchr::EventHandler::Base
 
       def initialize
