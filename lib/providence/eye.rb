@@ -26,7 +26,7 @@ module Providence
     end
   
     def run_suite
-      watchrs.each {|w| w.run_all(ec) }
+      watchrs.each {|w| w.class.run_all }
     end
     
     def watch

@@ -3,7 +3,7 @@ require 'spec_helper'
 module Providence
   describe Eye do
     before(:each) do
-      @base_watchr = Eye.new(mock())
+      @eye = Eye.new(mock())
     end
     
     it "should not have an image for asdf" do
@@ -36,44 +36,42 @@ module Providence
     
     context "#initialize" do
       it "should take accept context and no args" do
-        bw = Eye.new(mock())
-        bw.watchrs.count.should == 0
+        eye = Eye.new(mock())
+        eye.watchrs.count.should == 0
       end
       
       it "should take context and multiple args" do
-        bw = Eye.new(mock(), Object.new, Object.new, Object.new)
-        bw.watchrs.count.should == 3
+        eye = Eye.new(mock(), Object.new, Object.new, Object.new)
+        eye.watchrs.count.should == 3
       end
     end
     
     context "#watchrs" do
       it "should accept multiple objects" do
-        @base_watchr.watchrs << Object.new << Object.new
-        @base_watchr.watchrs.count.should == 2
-      end
-    end
-    
-    context "#run_suite" do
-      it "should call run_all on each watchr" do
-        5.times do
-          watchr = mock()
-          watchr.expects(:run_all).once
-          @base_watchr.watchrs << watchr
-        end
-        
-        @base_watchr.run_suite
+        @eye.watchrs << Object.new << Object.new
+        @eye.watchrs.count.should == 2
       end
     end
     
     context "#run_suite" do
       it "should call watch on each watchr" do
         5.times do
+          @eye.watchrs << RspecWatchr.new
+        end
+        RspecWatchr.expects(:run_all).times(5)
+        @eye.run_suite
+      end
+    end
+    
+    context "#watch" do
+      it "should call watch on each watchr" do
+        5.times do
           watchr = mock()
           watchr.expects(:watch).once
-          @base_watchr.watchrs << watchr
+          @eye.watchrs << watchr
         end
         
-        @base_watchr.watch
+        @eye.watch
       end
     end
   end
