@@ -7,24 +7,18 @@ module Providence
     end
     
     class << self
-      def growl_test_status(status)
+      def parse_test_status(status)
         status = status.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
         
         if status.match(/failed/)
-          message = 'Cukes are failing'
-          image = Eye.fail_image
+          :fail
         elsif status.match(/passed/)
-          message = 'All cukes passed'
-          image = Eye.pass_image
+          :pass
         elsif status.match(/undefined/)
-          message = 'Undefined steps'
-          image = Eye.pending_image
+          :pending
         else
-          message = 'Cannot determine test status'
-          image = Eye.alert_image
-        end
-        
-        Eye.growl message, image
+          :alert
+        end        
       end
 
       def run_all

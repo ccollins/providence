@@ -7,7 +7,12 @@ module Providence
         Eye.growl "Running #{name}"
         system('clear')
         puts(cmd)
-  
+        
+        status = parse_test_status(run_command(cmd))
+        Eye.growl send("#{status}_message".to_sym), Eye.send("#{status}_image".to_sym)
+      end
+      
+      def run_command(cmd)
         last_output = []
         stdin, stdout, stderr = Open3.popen3(cmd)
         while !stdout.eof? || !stderr.eof
@@ -19,13 +24,18 @@ module Providence
           last_output.push(line)
           puts line         
         end
-  
-        growl_test_status last_output
       
         stdin.close
         stdout.close
         stderr.close
+        
+        last_output
       end
+      
+      def pass_message; 'Passed'; end
+      def fail_message; 'Failed'; end
+      def pending_message; 'Pending further work'; end
+      def alert_message; 'Cannot determine test status'; end
     end
   end
 end

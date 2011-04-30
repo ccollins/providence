@@ -9,26 +9,16 @@ module Providence
     end
     
     class << self
-      def growl_test_status(status)
+      def parse_test_status(status)
         status = status.join('').gsub(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
 
         if status.match(/\s0\s(errors|failures)/)
-          if status.match(/pending/)
-            message = 'Pending specs, all others passing'
-            image = Eye.pending_image
-          else
-            message = 'All specs passed'
-            image = Eye.pass_image  
-          end
+          status.match(/pending/) ? :pending : :pass
         elsif status.match(/(error|failure)/)
-          message = 'Specs are failing'
-          image = Eye.fail_image
+          :fail
         else
-          message = 'Cannot determine test status'
-          image = Eye.alert_image
+          :alert
         end
-        
-        Eye.growl message, image
       end
 
       def run_all

@@ -3,6 +3,7 @@ require 'bundler'
 Bundler.setup
 
 require 'rspec'
+require 'tempfile'
 
 RSpec.configure do |config|
   config.mock_with :mocha

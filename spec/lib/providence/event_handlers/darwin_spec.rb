@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'tempfile'
 
 def tempfile(name)
   file = Tempfile.new(name)
